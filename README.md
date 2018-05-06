@@ -16,6 +16,10 @@ cfMMOC library is a planet-scale out-of-core terrain rendering framework on top 
 |-------|--------|
 | Fedora 27 64-bit | ![Building Pass](https://github.com/cfmmoc/cfmmoc-mics/blob/master/build-passing.png) |
 
+## Dependencies
+
+The dependency for libRQTS is GNU C Library (I/O stream, shared memory, container such as vector and map, string. etc). 
+
 ## Compilation
 
 Run `make all`, then copy `libRQTS.so` to `bin/` directory of cfMMOC (https://github.com/cfmmoc/cfmmoc) project.
