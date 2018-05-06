@@ -52,21 +52,64 @@ struct SHARED_LOAD_RQ
 class CTBLoadReq
 {
 public:
+	/**
+    	@remarks
+        	default constructor
+	**/
 	CTBLoadReq(void);
+	/**
+    	@remarks
+        	initialize a load request
+    	@par
+        	split	indicates request type (split/merge)
+		name	filename of the request
+    	**/
 	CTBLoadReq(bool split, std::string name);
+	/**
+    	@remarks
+        	default deconstructor
+	**/
 	~CTBLoadReq(void);
 
+	/**
+    	@remarks
+        	return type of load request, true for split request
+    	**/
 	bool IsSplitReq();
+	/**
+    	@remarks
+        	return filename of load request
+    	**/
 	std::string GetReqName();
+	/**
+    	@remarks
+        	return counter of request
+    	**/
 	int GetReqCount();
+	/**
+    	@remarks
+        	return counter of finished request
+    	**/
 	int GetReqOverCount();
+	/**
+    	@remarks
+        	increase counter of request by one
+    	**/
 	void IncReqCount();
+	/**
+    	@remarks
+        	increase counter of finished request by one
+    	**/
 	void IncReqOverCount();
 
 private:
+	// type of load request, true for split request
 	bool mSplitReq;
+	// filename of load request
 	std::string mReqName;
+	// counter of request
 	int mReqCount;
+	// counter of finished request
 	int mReqOverCount;
 };
 
