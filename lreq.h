@@ -37,11 +37,19 @@
 
 #include <string>
 
+/**
+  @brief  A struct representing a group of load requests for inter-process communication.
+**/
+
 struct SHARED_LOAD_RQ
 {
+    // read/write flag for inter-process communication
     int mWritable;
+    // request types for a group of load requests
     bool mIsSplit[32];
+    // filenames for a group of load requests
     char mFilename[32][32];
+    // the number of load requests
     unsigned int mLength;
 };
 
