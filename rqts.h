@@ -47,11 +47,10 @@
 	@par
 		name	filename of a given tile
 **/
-
 std::string replaceNamend(std::string name);
 
 /**
-	@brief  A class representing neighbors of a tile.
+	@brief  Core class of libRQTS, mainly for split/merge checking, invoking splitting/merging and maintaining neighbors of tiles.
 **/
 
 class libRQTS
@@ -76,23 +75,23 @@ public:
 	bool checksplit(std::string filename);
 	/**
     	@remarks
-        	check whether a group of tiles could be merged or not one by one
+        	check whether a group of tiles (represented by their parents) could be merged or not one by one
 	@par
-		filenames	filenames of a group of tiles
+		filenames	a group of parents of every four sibling tiles to be merged
 	**/
 	bool checkmerge(std::vector<std::string> filenames);
 	/**
     	@remarks
-        	check whether a tile could be merged or not
+        	check whether four tiles could be merged or not
 	@par
-		filename	filename of a given tile
-	**/
+		filename	filename of parent of given four tiles
+	**/	
 	bool checkMerge(std::string filename);
 	/**
     	@remarks
-        	actual operation of merging a tile
+        	actual operation of merging four tiles
 	@par
-		filename	filename of a given tile
+		filename	filename of the parent of four tiles
 	**/
 	void merge(std::string filename);
 	/**
@@ -104,12 +103,15 @@ public:
 	void split(std::string filename);
 	/**
     	@remarks
-        	check load queue, and return load request from load queue
+        	check load queue, and return load request from load queue for merging request
+		for splitting request, increase its counter and return one of its child according to its counter
 	**/
 	std::string checkfile();
 	/**
     	@remarks
-        	return load request from load queue
+        	erase and return load request from load queue for merging request
+		for splitting request, increase its finished counter until four, 
+		and then erase and return load request from load queue
 	**/
 	std::string getfile();
 	/**
