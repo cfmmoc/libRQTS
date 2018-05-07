@@ -10,6 +10,8 @@ Copyright (c) 2016-2018 by Authors (Jin Yan, Guanghong Gong, Ni Li and Luhao Xia
 
 libRQTS implements an algorithm of Restricted QuadTreeS for cfMMOC (https://github.com/cfmmoc/cfmmoc) terrain rendering library.
 
+Letters R, Q, T, and S in libRQTS logo also mirror the names of four sibling quads, Q, R, S, and T.
+
 cfMMOC library is a planet-scale out-of-core terrain rendering framework on top of OGRE v1.9.
 
 | Build | Status |
