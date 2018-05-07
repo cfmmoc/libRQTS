@@ -122,13 +122,30 @@ public:
 	std::string checkbound(std::string filename, unsigned char side, unsigned char* mask);
 
 private:
+	/**
+    	@remarks
+        	initialize neighbors of six initial tiles
+	**/
 	void initRootNeighbor();
+	/**
+    	@remarks
+        	allocate shared memory
+	**/
 	void initSharedM();
+	/**
+    	@remarks
+        	free shared memory
+	**/
 	void closeSharedM();
+	
+	// a map from tiles to their neighbors
 	std::tr1::unordered_map<std::string, CTBNeighbor*>* mHashTile2Neighbor;
+	// a queue of load requests
 	std::vector<CTBLoadReq*> mLoadQueue;
+	// a copy of queue of load requests
 	std::vector<CTBLoadReq*> mLoadQueueReg;
 
+	// shared memory and related variables of sharing load requests between back-end and fore-end processes
 	void *mSharedMemLoad;
 	struct SHARED_LOAD_RQ *mSharedSttLoad;
 	int mSharedIDLoad;
