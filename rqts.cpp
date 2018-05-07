@@ -33,12 +33,20 @@
        .@#       .@@@@. @   ,,   @@@@@@@@@@@@#        .@@@@@@@@    .,        @@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**/
 
+/**
+	@brief  Core class of libRQTS, mainly for split/merge checking, invoking splitting/merging and maintaining neighbors of tiles.
+**/
+
 #include "rqts.h"
 #include <sys/shm.h>
 #include <string>
 #include <string.h>
 #include <iostream>
 
+/**
+    	@remarks
+        	allocate shared memory and initialize neighbors of initial tiles
+**/
 libRQTS::libRQTS(void)
 {
 	std::string copyrightinfo("libRQTS is an implementation of Restricted QuadTreeS.\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%%%%%%%%%&@@@@*,,,,,,*%&@@@@@\n@@@&%#*,* @@@@@@@@@@@@@&%#*,*@@@@@@@@@@@@@@@@@*             @@@*            .@@\n@@@.    ,@@@@@@@@&@@@@@,    .@@@@@@@@@@@@@@@@*    @@@@.  .@@@@#.   @@@@@@@   @@\n@@@@@   .@@@@@@*  ,@@@@@@.  .@@@@@@@@@@@@@@@,  .@@@@@@.  .@@@@.  .@@@@@@@@.  @@\n@@@@@,  .@@@@@@   ,@@@@@@.  @@@@@@@@@@@@@@@@@.  *@@@@@.  .@@@@.   &@@@@@@@.  .@\n@@@@@.   @@@@@@    @@@@@@,  @@@@@@@@@@@@@@@@@@    .,,,   .@@@@. ,@@@@@@@@@.  .@\n@@@@@. .@@@@@@@@@@@@@@@@@.  @@@@@@@@@@@@@@@@@@*          .@@@@. ,@@@@@@@@@.  .@\n@@@@@, .@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@    @@@@.  .@@@@.  *@@@@@@@@.  .@\n@@@@@  .@@@@@@@@@@@@@@@@@  .@@@@@@@@@@@@@@@@@@  .@@@@@.  .@@@@.  .@@&%%&@@.   @\n@@@@@   @@@@@@@@&&@@@@@@@  .@@@&%@@@@@@@@/,/@@  .@@@@@.  .@@@@   ,@.   @@@.  @@\n@@@@@  @@@@@     .@@@@@@#  ./.     *@@@@@   .    @@@/,    .#@@@      .(#.    @@\n@@@@@  @@@@@     .@@@@@@.     @@@   *@@@@@      @@@@        &@@@             @@\n@@@@*  @@@@@@@.  .@@@@@@.   @@@@@@@  .@@@@@@&&@@@@@@@@@@@@@@@@@&   .#%%%@@@@@@@\n@@@@.  @@@@@@@.   @@@@@@, . @@@@@@@   @@@@@@@@@@@@@@@@@@@@@@@@@*   @&%%%@@@@@@@\n@@@@. .@@@@@@@. .@@@@@@#. .@@@@@@@@@  ,@@.                 @@@.           *#@@@\n@@@@, .@@@@@@@, .@@@@@@.  .@@@@@@@@@  .@@. .@@@@@  .@@@@   @@@.    @@@@@@   ,@@\n@@@#. .@@@@@@*  .@@@@@@.   @@@@@@@@@  .@@  .@@@@@  .@@@@   @@@.   @@@@@@@@   @@\n@@@.   @@@@@@.   @@@@@@, .@@@@@@@@@#   @@@@@@@@@@  .@@@@@@@@@@   @@@@@@@@#   @@\n@@@. .@@@@@@@, .@@@@@@@. .@@@@@@@@@.  @@@@@@@@@@@  .@@@@@@@@@@@@@@&%%*,.    @@@\n@@@, .@@@@@@@, .@@@@@@@  .@@@@@@@@@,  @@@@@@@@@@@  .@@@@@@@@@@@#          @@@@@\n@@#. .@@@@@@*  .@@@@@@@   @@@@@@@@*   @@@@@@@@@@@  .@@@@@@@@@@*     @@@@@@@@@@@\n@@.   @@@@@@.   @@@@@@@  #@@@@@@@*   @@@@@@@@@@@@  .@@@@@@@@@,   @@@@@@@@@*,*@@\n@@,  @@@@@@@,  @@@@@@@#  ,@@@@@@@   @@@@@@@@@@@@@  .@@@@@@@@@.  @@@@@@@@@@   @@\n,.   .,/@@,.   .,/@@@@.   .#@@#*   @@@@@@@@@@@%%(  .(%&@@@@@@@   *#@@&%#.    @@\n       .@#       .@@@@. @   ,,   @@@@@@@@@@@@#        .@@@@@@@@    .,        @@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nAuthors:\nJin Yan (kinian@126.com) from Capital University of Economics and Business,\nGuanghong Gong (ggh@buaa.edu.cn) and Ni Li* (lini@buaa.edu.cn) from Beihang University,\nLuhao Xiao (shawmoso@163.com) from Beijing ChuangQi Horizon Technology Co., Ltd.\nLicensed under The GNU General Public License v3.0 (GPLv3).\nAny modification, re-utilization or copy of the source or binary format in other software or publications should mention a CITATION (https://github.com/cfmmoc/) of this library.\n");
@@ -47,11 +55,19 @@ libRQTS::libRQTS(void)
 	initRootNeighbor();
 }
 
+/**
+    	@remarks
+        	free shared memory
+**/
 libRQTS::~libRQTS(void)
 {
 	closeSharedM();
 }
 
+/**
+    	@remarks
+        	initialize neighbors of six initial tiles (from u to z)
+**/
 void libRQTS::initRootNeighbor()
 {
 	mHashTile2Neighbor = new std::tr1::unordered_map<std::string, CTBNeighbor*>;
@@ -96,6 +112,10 @@ void libRQTS::initRootNeighbor()
 
 }
 
+/**
+    	@remarks
+        	allocate shared memory
+**/
 void libRQTS::initSharedM()
 {
 	mSharedIDLoad = shmget((key_t)1335, sizeof(struct SHARED_LOAD_RQ), 0666|IPC_CREAT);
@@ -103,12 +123,20 @@ void libRQTS::initSharedM()
 	mSharedSttLoad = (struct SHARED_LOAD_RQ*)mSharedMemLoad;
 }
 
+/**
+    	@remarks
+        	free shared memory
+**/
 void libRQTS::closeSharedM()
 {
 	shmdt(mSharedMemLoad);
 	shmctl(mSharedIDLoad, IPC_RMID, 0);
 }
 
+/**
+    	@remarks
+        	send load requests to fore-end process
+**/
 void libRQTS::sendfile()
 {
     if(mSharedSttLoad->mWritable != 1)
@@ -126,6 +154,11 @@ void libRQTS::sendfile()
     }
 }
 
+/**
+    	@remarks
+        	receive load requests from back-end process
+		return true if success
+**/
 bool libRQTS::recvfile()
 {
     bool ret = false;
@@ -152,10 +185,21 @@ bool libRQTS::recvfile()
     return ret;
 }
 
+/**
+    	@remarks
+        	check whether a tile could be split or not
+	@par
+		filename	filename of a given tile
+**/
 bool libRQTS::checksplit(std::string filename)
 {
     bool can_split[4] = {false, false, false, false};
     CTBNeighbor *neighbor = (*mHashTile2Neighbor)[filename];
+	/**
+		check the neighbors of the given tile
+		if a neighbor does not allow the given tile to be split (depending on the relationship of restricted quadtrees), 
+		then recursively check the corresponding neighbor for splitting
+	**/
 	for (int i = 0; i < 4; i++)
 	{
 		if (neighbor->GetNeighbor(i * 2).length() == 0 || neighbor->GetNeighbor(i * 2).length() >= filename.length())
@@ -167,7 +211,10 @@ bool libRQTS::checksplit(std::string filename)
 			can_split[i] = checksplit(neighbor->GetNeighbor(i * 2));
 		}
 	}
-
+	/**
+		if the given tile could be split and it is not in load queue
+		then add it to the load queue
+	**/
 	if (can_split[0] && can_split[1] && can_split[2] && can_split[3])
 	{
 		bool found = false;
@@ -191,8 +238,17 @@ bool libRQTS::checksplit(std::string filename)
 	return true;
 }
 
+/**
+    	@remarks
+        	check whether a group of tiles (represented by their parents) could be merged or not one by one
+	@par
+		filenames	a group of parents of every four sibling tiles to be merged
+**/
 bool libRQTS::checkmerge(std::vector<std::string> filenames)
 {
+    /**
+    	iterate all tiles, check their mergability
+    **/
     for (std::vector<std::string>::iterator it = filenames.begin();
 		it != filenames.end(); it++)
 	{
@@ -205,6 +261,12 @@ bool libRQTS::checkmerge(std::vector<std::string> filenames)
 	return false;
 }
 
+/**
+    	@remarks
+        	check whether four tiles could be merged or not
+	@par
+		filename	filename of parent of given four tiles
+**/
 bool libRQTS::checkMerge(std::string filename)
 {
     std::string sub_name[4] = {"/q", "/r", "/s", "/t"};
@@ -213,6 +275,11 @@ bool libRQTS::checkMerge(std::string filename)
 		2, 3, 6, 7,
 		4, 5, 6, 7};
 
+	/**
+		check the neighbors of the given tile
+		if it satisfies merging condition (depending on the relationship of restricted quadtrees), 
+		then add it to the load queue
+	**/
 	for (int i = 0; i < 4; i++)
 	{
 		CTBNeighbor *neighbor = (*mHashTile2Neighbor)[filename + sub_name[i]];
@@ -237,6 +304,12 @@ bool libRQTS::checkMerge(std::string filename)
 	return true;
 }
 
+/**
+    	@remarks
+        	actual operation of splitting a tile
+	@par
+		filename	filename of a given tile
+**/
 void libRQTS::split(std::string filename)
 {
 
@@ -252,6 +325,10 @@ void libRQTS::split(std::string filename)
 		(*mHashTile2Neighbor)[filename + sub_name[i]] = new CTBNeighbor();
 	}
 
+	
+	/**
+		establish neighbor relationship between sibling children of given tile 
+	**/
 	for (int i = 0; i < 4; i++)
 	{
 		CTBNeighbor *neighbor = (*mHashTile2Neighbor)[filename + sub_name[i]];
@@ -264,6 +341,10 @@ void libRQTS::split(std::string filename)
 		}
 	}
 
+	/**
+		adjust neighbor relationship of neighbors of given tile
+		establish neighbor relationship of children of given tile
+	**/
 	CTBNeighbor *neighbor_of_father = (*mHashTile2Neighbor)[filename];
 	for (int i = 0; i < 8; i = i + 2)
 	{
@@ -336,11 +417,20 @@ void libRQTS::split(std::string filename)
 		}
 	}
 
+	/**
+		erase neighbor relationship of given tile
+	**/
 	std::tr1::unordered_map<std::string, CTBNeighbor*>::iterator it = (*mHashTile2Neighbor).find(filename);
 	(*mHashTile2Neighbor).erase(it);
 
 }
 
+/**
+    	@remarks
+        	actual operation of merging four tiles
+	@par
+		filename	filename of the parent of four tiles
+**/
 void libRQTS::merge(std::string filename)
 {
 
@@ -357,6 +447,9 @@ void libRQTS::merge(std::string filename)
 		2, 6,
 		3, 6};
 
+	/**
+		establish neighbor relationship of parent tile
+	**/
 	CTBNeighbor *neighbor = (*mHashTile2Neighbor)[filename];
 	for (int i = 0; i < 8; i++)
 	{
@@ -364,6 +457,9 @@ void libRQTS::merge(std::string filename)
 		neighbor->SetNeighbor(i, neighbor_of_son->GetNeighbor(son_to_neighbor[i][1]));
 	}
 
+	/**
+		adjust neighbor relationship of neighbors of given four tiles
+	**/
 	for (int i = 0; i < 8; i = i + 2)
 	{
 		unsigned int s1 = son_to_neighbor[i][0];
@@ -398,6 +494,9 @@ void libRQTS::merge(std::string filename)
 		}
 	}
 
+	/**
+		erase neighbor relationship of given four tiles
+	**/
 	for (int i = 0; i < 4; i++)
 	{
 		std::tr1::unordered_map<std::string, CTBNeighbor*>::iterator it = (*mHashTile2Neighbor).find(filename + sub_name[i]);
@@ -406,6 +505,11 @@ void libRQTS::merge(std::string filename)
 
 }
 
+/**
+    	@remarks
+        	check load queue, and return load request from load queue for merging request
+		for splitting request, increase its counter and return one of its child according to its counter
+**/
 std::string libRQTS::checkfile()
 {
 	std::string name;
@@ -445,6 +549,12 @@ std::string libRQTS::checkfile()
 	return name;
 }
 
+/**
+    	@remarks
+        	erase and return load request from load queue for merging request
+		for splitting request, increase its finished counter until four, 
+		and then erase and return load request from load queue
+**/
 std::string libRQTS::getfile()
 {
 	std::string name;
@@ -466,11 +576,23 @@ std::string libRQTS::getfile()
 	return name;
 }
 
+/**
+    	@remarks
+        	return whether load queue is empty, true if empty
+**/
 bool libRQTS::isdone()
 {
 	return mLoadQueue.empty();
 }
 
+/**
+    	@remarks
+        	check neighbors of given tile for given side
+	@par
+		filename	filename of a given tile
+		side		indicates the give side (from 0 to 7)
+		*mask		indicates the level of detail of four side of the corresponding neighbor (depends on side) for given tile
+**/
 std::string libRQTS::checkbound(std::string filename, unsigned char side, unsigned char* mask)
 {
 	CTBNeighbor *neighbor = (*mHashTile2Neighbor)[filename];
@@ -491,6 +613,12 @@ std::string libRQTS::checkbound(std::string filename, unsigned char side, unsign
 	return neighborname;
 }
 
+/**
+    	@remarks
+        	replace the trailing letter of a tile's filename (from q,r,s,t to w,x,y,z, respectively)
+	@par
+		name	filename of a given tile
+**/
 std::string replacefile(std::string name)
 {
     if (name.length() < 2)
