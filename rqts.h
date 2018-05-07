@@ -43,7 +43,9 @@
 
 /**
     	@remarks
-        	replace the trailing letter of filename
+        	replace the trailing letter of a tile's filename
+	@par
+		name	filename of a given tile
 **/
 
 std::string replaceNamend(std::string name);
@@ -68,26 +70,36 @@ public:
 	/**
     	@remarks
         	check whether a tile could be split or not
+	@par
+		filename	filename of a given tile
 	**/
 	bool checksplit(std::string filename);
 	/**
     	@remarks
-        	check whether a list of tiles could be merged or not
+        	check whether a group of tiles could be merged or not one by one
+	@par
+		filenames	filenames of a group of tiles
 	**/
 	bool checkmerge(std::vector<std::string> filenames);
 	/**
     	@remarks
         	check whether a tile could be merged or not
+	@par
+		filename	filename of a given tile
 	**/
 	bool checkMerge(std::string filename);
 	/**
     	@remarks
         	actual operation of merging a tile
+	@par
+		filename	filename of a given tile
 	**/
 	void merge(std::string filename);
 	/**
     	@remarks
         	actual operation of splitting a tile
+	@par
+		filename	filename of a given tile
 	**/
 	void split(std::string filename);
 	/**
@@ -117,7 +129,11 @@ public:
 	bool recvfile();
 	/**
     	@remarks
-        	check neighbors of given tile
+        	check neighbors of given tile for given side
+	@par
+		filename	filename of a given tile
+		side		indicates the give side (from 0 to 7)
+		*mask		indicates the level of detail of four side of the corresponding neighbor (depends on side) for given tile
 	**/
 	std::string checkbound(std::string filename, unsigned char side, unsigned char* mask);
 
