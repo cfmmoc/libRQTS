@@ -27,4 +27,4 @@ The dependency for libRQTS is GNU C Library (I/O stream, shared memory, containe
 
 On Fedora, first install building tool by using `yum insatll gcc-c++`. On Ubuntu, first run `apt install make g++`.
 
-Run `make all`, then copy `libRQTS.so` to `bin/` directory of cfMMOC (https://github.com/cfmmoc/cfmmoc) project.
+Then run `make all`, and manually copy `libRQTS.so` to `bin/` directory of cfMMOC (https://github.com/cfmmoc/cfmmoc) project.
